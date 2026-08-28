@@ -1,0 +1,229 @@
+{
+  "name": "Moodle Quiz Attempts to Supabase Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "Schedule Trigger (Every 10m)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT last_synced_at FROM sync_metadata WHERE key = 'moodle_quiz_attempts' LIMIT 1;"
+      },
+      "id": "2",
+      "name": "Get Last Sync Watermark",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [420, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_postgres_creds",
+          "name": "Supabase PostgreSQL Database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MOODLE_BASE_URL }}/webservice/rest/server.php",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "wstoken",
+              "value": "={{ $env.MOODLE_API_TOKEN }}"
+            },
+            {
+              "name": "wsfunction",
+              "value": "mod_quiz_get_user_attempts"
+            },
+            {
+              "name": "moodlewsrestformat",
+              "value": "json"
+            },
+            {
+              "name": "status",
+              "value": "finished"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3",
+      "name": "Fetch Moodle Quiz Attempts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalization and filter step\nconst lastSyncedTimestamp = new Date($('Get Last Sync Watermark').first().json.last_synced_at || 0).getTime() / 1000;\nconst response = $input.first().json;\n\nconst rawAttempts = response.attempts || (Array.isArray(response) ? response : []);\nconst newAttempts = [];\nlet maxTimeFinish = lastSyncedTimestamp;\n\nfor (const attempt of rawAttempts) {\n  const timeFinish = Number(attempt.timefinish || 0);\n  if (timeFinish > lastSyncedTimestamp) {\n    const score = Number(attempt.sumgrades || 0);\n    const maxScore = Number(attempt.maxmark || 100);\n    const percentage = maxScore > 0 ? ((score / maxScore) * 100) : score;\n    const status = percentage >= 50 ? 'passed' : 'failed';\n\n    if (timeFinish > maxTimeFinish) {\n      maxTimeFinish = timeFinish;\n    }\n\n    newAttempts.push({\n      moodle_attempt_id: attempt.id,\n      moodle_user_id: attempt.userid,\n      moodle_quiz_id: attempt.quiz,\n      attempt_number: attempt.attempt || 1,\n      score_obtained: score,\n      max_score: maxScore,\n      percentage: Number(percentage.toFixed(2)),\n      status: status,\n      time_taken_seconds: Math.max(0, timeFinish - Number(attempt.timestart || timeFinish)),\n      submitted_at: new Date(timeFinish * 1000).toISOString(),\n      raw_payload: JSON.stringify(attempt)\n    });\n  }\n}\n\nreturn {\n  newAttempts,\n  newWatermarkIso: new Date(maxTimeFinish * 1000).toISOString(),\n  hasNewData: newAttempts.length > 0\n};\n"
+      },
+      "id": "4",
+      "name": "Transform & Filter Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.hasNewData }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "5",
+      "name": "Has New Attempts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "return $json.newAttempts.map(attempt => ({ json: attempt }));"
+      },
+      "id": "6",
+      "name": "Split Attempts to Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO quiz_attempts (\n  moodle_attempt_id, student_id, quiz_id, attempt_number,\n  score_obtained, max_score, percentage, status, time_taken_seconds, submitted_at, raw_payload\n)\nSELECT \n  $1, s.id, q.id, $2, $3, $4, $5, $6, $7, $8::timestamptz, $9::jsonb\nFROM students s, quizzes q\nWHERE s.moodle_user_id = $10 AND q.moodle_quiz_id = $11\nON CONFLICT (moodle_attempt_id) DO UPDATE SET\n  score_obtained = EXCLUDED.score_obtained,\n  percentage = EXCLUDED.percentage,\n  status = EXCLUDED.status,\n  time_taken_seconds = EXCLUDED.time_taken_seconds,\n  submitted_at = EXCLUDED.submitted_at;\n",
+        "additionalFields": {
+          "queryParams": "={{ $json.moodle_attempt_id }}, {{ $json.attempt_number }}, {{ $json.score_obtained }}, {{ $json.max_score }}, {{ $json.percentage }}, {{ $json.status }}, {{ $json.time_taken_seconds }}, {{ $json.submitted_at }}, {{ $json.raw_payload }}, {{ $json.moodle_user_id }}, {{ $json.moodle_quiz_id }}"
+        }
+      },
+      "id": "7",
+      "name": "Upsert Quiz Attempts to Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1520, 200],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_postgres_creds",
+          "name": "Supabase PostgreSQL Database"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sync_metadata SET last_synced_at = $1::timestamptz, updated_at = now() WHERE key = 'moodle_quiz_attempts';",
+        "additionalFields": {
+          "queryParams": "={{ $('Transform & Filter Data').first().json.newWatermarkIso }}"
+        }
+      },
+      "id": "8",
+      "name": "Update Watermark in Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1740, 200],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_postgres_creds",
+          "name": "Supabase PostgreSQL Database"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Every 10m)": {
+      "main": [
+        [
+          {
+            "node": "Get Last Sync Watermark",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last Sync Watermark": {
+      "main": [
+        [
+          {
+            "node": "Fetch Moodle Quiz Attempts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Moodle Quiz Attempts": {
+      "main": [
+        [
+          {
+            "node": "Transform & Filter Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform & Filter Data": {
+      "main": [
+        [
+          {
+            "node": "Has New Attempts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has New Attempts?": {
+      "main": [
+        [
+          {
+            "node": "Split Attempts to Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Attempts to Items": {
+      "main": [
+        [
+          {
+            "node": "Upsert Quiz Attempts to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Quiz Attempts to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Update Watermark in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
