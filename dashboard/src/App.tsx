@@ -6,8 +6,8 @@ import { StudentPlanning } from './components/StudentPlanning';
 import { StudentDetailModal } from './components/StudentDetailModal';
 import { SettingsModal } from './components/SettingsModal';
 import { getSupabase } from './lib/supabase';
-import { mockCourses, mockStudents, mockQuizzes, mockAttempts, mockPlans } from './lib/mockData';
-import { Course, Student, Quiz, QuizAttempt, StudentPlan } from './types';
+import { mockInstitutes, mockCourses, mockStudents, mockQuizzes, mockAttempts, mockPlans } from './lib/mockData';
+import { Institute, Course, Student, Quiz, QuizAttempt, StudentPlan } from './types';
 import { AlertCircle } from 'lucide-react';
 
 export function App() {
@@ -17,34 +17,40 @@ export function App() {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  // Application Data States
-  const [courses, setCourses] = useState<Course[]>(mockCourses);
-  const [students, setStudents] = useState<Student[]>(mockStudents);
-  const [quizzes, setQuizzes] = useState<Quiz[]>(mockQuizzes);
-  const [attempts, setAttempts] = useState<QuizAttempt[]>(mockAttempts);
-  const [plans, setPlans] = useState<StudentPlan[]>(mockPlans);
+  // Multi-Tenant & Role Hierarchy States
+  const [institutes, setInstitutes] = useState<Institute[]>(mockInstitutes);
+  const [selectedInstituteId, setSelectedInstituteId] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'owner' | 'teacher'>('owner');
+  const [selectedClass, setSelectedClass] = useState<string>('all');
 
-  // Load Data function (from Supabase if configured, otherwise mock)
+  // Application Data States
+  const [allCourses, setAllCourses] = useState<Course[]>(mockCourses);
+  const [allStudents, setAllStudents] = useState<Student[]>(mockStudents);
+  const [allQuizzes, setAllQuizzes] = useState<Quiz[]>(mockQuizzes);
+  const [allAttempts, setAllAttempts] = useState<QuizAttempt[]>(mockAttempts);
+  const [allPlans, setAllPlans] = useState<StudentPlan[]>(mockPlans);
+
+  // Load Data function from Supabase
   const loadData = async () => {
     setIsRefreshing(true);
     const supabase = getSupabase();
 
     if (!supabase) {
-      // Use Mock Data
       setIsLiveMode(false);
-      setCourses(mockCourses);
-      setStudents(mockStudents);
-      setQuizzes(mockQuizzes);
-      setAttempts(mockAttempts);
-      setPlans(mockPlans);
+      setInstitutes(mockInstitutes);
+      setAllCourses(mockCourses);
+      setAllStudents(mockStudents);
+      setAllQuizzes(mockQuizzes);
+      setAllAttempts(mockAttempts);
+      setAllPlans(mockPlans);
       setIsRefreshing(false);
       return;
     }
 
     try {
       setIsLiveMode(true);
-      // Fetch from Supabase
-      const [coursesRes, studentsRes, quizzesRes, attemptsRes, plansRes] = await Promise.all([
+      const [instRes, coursesRes, studentsRes, quizzesRes, attemptsRes, plansRes] = await Promise.all([
+        supabase.from('institutes').select('*'),
         supabase.from('courses').select('*'),
         supabase.from('students').select('*'),
         supabase.from('quizzes').select('*'),
@@ -52,11 +58,12 @@ export function App() {
         supabase.from('student_plans').select('*'),
       ]);
 
-      if (coursesRes.data && coursesRes.data.length > 0) setCourses(coursesRes.data);
-      if (studentsRes.data && studentsRes.data.length > 0) setStudents(studentsRes.data);
-      if (quizzesRes.data && quizzesRes.data.length > 0) setQuizzes(quizzesRes.data);
-      if (attemptsRes.data && attemptsRes.data.length > 0) setAttempts(attemptsRes.data);
-      if (plansRes.data && plansRes.data.length > 0) setPlans(plansRes.data);
+      if (instRes.data && instRes.data.length > 0) setInstitutes(instRes.data);
+      if (coursesRes.data && coursesRes.data.length > 0) setAllCourses(coursesRes.data);
+      if (studentsRes.data && studentsRes.data.length > 0) setAllStudents(studentsRes.data);
+      if (quizzesRes.data && quizzesRes.data.length > 0) setAllQuizzes(quizzesRes.data);
+      if (attemptsRes.data && attemptsRes.data.length > 0) setAllAttempts(attemptsRes.data);
+      if (plansRes.data && plansRes.data.length > 0) setAllPlans(plansRes.data);
     } catch (err) {
       console.error('Error fetching live data from Supabase', err);
     } finally {
@@ -67,6 +74,46 @@ export function App() {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Filter dataset by Selected Institute
+  const instituteStudents = allStudents.filter(
+    (s) => selectedInstituteId === 'all' || s.institute_id === selectedInstituteId
+  );
+  const instituteStudentIds = new Set(instituteStudents.map((s) => s.id));
+
+  const instituteCourses = allCourses.filter(
+    (c) => selectedInstituteId === 'all' || c.institute_id === selectedInstituteId
+  );
+  const instituteQuizzes = allQuizzes.filter(
+    (q) => selectedInstituteId === 'all' || q.institute_id === selectedInstituteId
+  );
+  const instituteAttempts = allAttempts.filter(
+    (a) => selectedInstituteId === 'all' || a.institute_id === selectedInstituteId || instituteStudentIds.has(a.student_id)
+  );
+  const institutePlans = allPlans.filter(
+    (p) => selectedInstituteId === 'all' || p.institute_id === selectedInstituteId || instituteStudentIds.has(p.student_id)
+  );
+
+  // Extract classes available in this institute
+  const availableClasses = Array.from(
+    new Set(instituteStudents.map((s) => s.class_name).filter(Boolean))
+  ) as string[];
+
+  // Further filter by Selected Class if in Teacher Mode
+  const activeStudents = instituteStudents.filter(
+    (s) => viewMode === 'owner' || selectedClass === 'all' || s.class_name === selectedClass
+  );
+  const activeStudentIds = new Set(activeStudents.map((s) => s.id));
+
+  const activeAttempts = instituteAttempts.filter(
+    (a) => viewMode === 'owner' || selectedClass === 'all' || activeStudentIds.has(a.student_id) || a.class_name === selectedClass
+  );
+  const activeQuizzes = instituteQuizzes.filter(
+    (q) => viewMode === 'owner' || selectedClass === 'all' || q.class_name === selectedClass
+  );
+  const activePlans = institutePlans.filter(
+    (p) => viewMode === 'owner' || selectedClass === 'all' || activeStudentIds.has(p.student_id)
+  );
 
   // Save/Update Student Plan
   const handleSavePlan = async (planData: Partial<StudentPlan>) => {
@@ -87,7 +134,7 @@ export function App() {
     }
 
     // Local / Mock save
-    setPlans((prev) => {
+    setAllPlans((prev) => {
       const existingIndex = prev.findIndex((p) => p.student_id === planData.student_id);
       if (existingIndex >= 0) {
         const updated = [...prev];
@@ -96,6 +143,7 @@ export function App() {
       } else {
         const newPlan: StudentPlan = {
           id: `p_${Date.now()}`,
+          institute_id: planData.institute_id,
           student_id: planData.student_id!,
           risk_level: planData.risk_level || 'medium',
           status: planData.status || 'active',
@@ -110,27 +158,38 @@ export function App() {
     });
   };
 
-  const selectedStudent = students.find((s) => s.id === selectedStudentId) || null;
-  const selectedStudentPlan = plans.find((p) => p.student_id === selectedStudentId);
+  const selectedStudent = allStudents.find((s) => s.id === selectedStudentId) || null;
+  const selectedStudentPlan = allPlans.find((p) => p.student_id === selectedStudentId);
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-[#F0F0F0] flex flex-col selection:bg-[#F40009] selection:text-white">
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        institutes={institutes}
+        selectedInstituteId={selectedInstituteId}
+        onSelectInstitute={(id) => {
+          setSelectedInstituteId(id);
+          setSelectedClass('all');
+        }}
+        viewMode={viewMode}
+        onToggleViewMode={(mode) => setViewMode(mode)}
+        classes={availableClasses}
+        selectedClass={selectedClass}
+        onSelectClass={(cls) => setSelectedClass(cls)}
         isLiveMode={isLiveMode}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onRefresh={loadData}
         isRefreshing={isRefreshing}
       />
 
-      {/* Demo Mode Notice Banner in Pitthugram style */}
+      {/* Demo Mode Notice Banner */}
       {!isLiveMode && (
         <div className="bg-[#1A1A1A] border-b border-[#2A2A2A] px-4 py-2 text-xs text-[#A0A0A0] flex items-center justify-between">
           <div className="flex items-center space-x-2 max-w-7xl mx-auto w-full">
             <AlertCircle className="w-4 h-4 text-[#F40009] flex-shrink-0" />
             <span>
-              <strong className="text-[#F0F0F0]">Preview Mode:</strong> Currently displaying sample Moodle test submissions. Connect your Supabase instance anytime in Settings.
+              <strong className="text-[#F0F0F0]">Preview Mode:</strong> Displaying sample multi-coaching test submissions.
             </span>
           </div>
         </div>
@@ -140,29 +199,40 @@ export function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {activeTab === 'overview' && (
           <DashboardOverview
-            students={students}
-            attempts={attempts}
-            courses={courses}
-            quizzes={quizzes}
+            institutes={institutes}
+            selectedInstituteId={selectedInstituteId}
+            viewMode={viewMode}
+            selectedClass={selectedClass}
+            students={activeStudents}
+            attempts={activeAttempts}
+            courses={instituteCourses}
+            quizzes={activeQuizzes}
             onSelectStudent={(id) => setSelectedStudentId(id)}
+            onSelectClass={(cls) => {
+              setSelectedClass(cls);
+              setViewMode('teacher');
+            }}
           />
         )}
 
         {activeTab === 'students' && (
           <StudentTable
-            students={students}
-            attempts={attempts}
-            quizzes={quizzes}
-            courses={courses}
+            students={activeStudents}
+            attempts={activeAttempts}
+            quizzes={activeQuizzes}
+            courses={instituteCourses}
+            classes={availableClasses}
+            selectedClass={selectedClass}
             onSelectStudent={(id) => setSelectedStudentId(id)}
           />
         )}
 
         {activeTab === 'planning' && (
           <StudentPlanning
-            students={students}
-            plans={plans}
-            attempts={attempts}
+            students={activeStudents}
+            plans={activePlans}
+            attempts={activeAttempts}
+            selectedClass={selectedClass}
             onSavePlan={handleSavePlan}
             onSelectStudent={(id) => setSelectedStudentId(id)}
           />
@@ -172,8 +242,8 @@ export function App() {
       {/* Student Detail Modal */}
       <StudentDetailModal
         student={selectedStudent}
-        attempts={attempts}
-        quizzes={quizzes}
+        attempts={allAttempts}
+        quizzes={allQuizzes}
         plan={selectedStudentPlan}
         onClose={() => setSelectedStudentId(null)}
         onOpenPlanning={() => {
