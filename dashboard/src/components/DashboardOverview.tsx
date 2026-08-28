@@ -17,7 +17,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   quizzes,
   onSelectStudent,
 }) => {
-  // Compute Key Performance Indicators (KPIs)
+  // Compute KPIs
   const totalSubmissions = attempts.length;
   const uniqueStudentsTested = new Set(attempts.map((a) => a.student_id)).size;
   
@@ -40,38 +40,38 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Total Students Tested */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl hover:border-[#333333] transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Students Active</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
-                {uniqueStudentsTested} <span className="text-xs font-normal text-slate-400">/ {students.length} Total</span>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#A0A0A0]">Active Students</p>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F0F0F0] mt-1">
+                {uniqueStudentsTested} <span className="text-xs font-normal text-[#777777]">/ {students.length} Total</span>
               </h3>
             </div>
-            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+            <div className="p-3 bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30 rounded-xl">
               <Users className="w-6 h-6" />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-xs text-slate-500">
-            <span className="text-emerald-600 font-medium mr-1">100%</span> participation across {quizzes.length} quizzes
+          <div className="mt-4 flex items-center text-xs text-[#A0A0A0]">
+            <span className="text-emerald-400 font-semibold mr-1">100%</span> participation across {quizzes.length} tests
           </div>
         </div>
 
         {/* Class Average Score */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl hover:border-[#333333] transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Class Average</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#A0A0A0]">Class Average</p>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F0F0F0] mt-1">
                 {averageScore}%
               </h3>
             </div>
-            <div className="p-3 bg-violet-50 text-violet-600 rounded-xl">
+            <div className="p-3 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded-xl">
               <Award className="w-6 h-6" />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-xs text-slate-500">
-            <span className={`font-medium mr-1 ${averageScore >= 70 ? 'text-emerald-600' : 'text-amber-600'}`}>
+          <div className="mt-4 flex items-center text-xs text-[#A0A0A0]">
+            <span className={`font-semibold mr-1 ${averageScore >= 70 ? 'text-emerald-400' : 'text-amber-400'}`}>
               {averageScore >= 70 ? 'Satisfactory' : 'Needs Attention'}
             </span>
             overall test mean
@@ -79,38 +79,38 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         </div>
 
         {/* Overall Pass Rate */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl hover:border-[#333333] transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Pass Rate</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#A0A0A0]">Pass Rate</p>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F0F0F0] mt-1">
                 {passRate}%
               </h3>
             </div>
-            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div className="p-3 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded-xl">
               <CheckCircle2 className="w-6 h-6" />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-xs text-slate-500">
-            <span className="text-slate-700 font-medium mr-1">{passedCount} of {totalSubmissions}</span> attempts $\ge$ 60%
+          <div className="mt-4 flex items-center text-xs text-[#A0A0A0]">
+            <span className="text-[#F0F0F0] font-semibold mr-1">{passedCount} of {totalSubmissions}</span> attempts $\ge$ 60%
           </div>
         </div>
 
         {/* Students At Risk */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl hover:border-[#F40009]/40 transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Needs Intervention</p>
-              <h3 className="text-2xl sm:text-3xl font-bold text-rose-600 mt-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#A0A0A0]">Needs Intervention</p>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F40009] mt-1">
                 {atRiskCount}
               </h3>
             </div>
-            <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
+            <div className="p-3 bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30 rounded-xl">
               <AlertTriangle className="w-6 h-6" />
             </div>
           </div>
-          <div className="mt-4 flex items-center text-xs text-slate-500">
-            Students averaging below passing grade threshold
+          <div className="mt-4 flex items-center text-xs text-[#A0A0A0]">
+            Students averaging below passing grade
           </div>
         </div>
       </div>
@@ -119,16 +119,18 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       <AnalyticsCharts attempts={attempts} quizzes={quizzes} students={students} />
 
       {/* Recent Submissions Feed */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#2A2A2A]">
           <div>
-            <h3 className="text-base font-semibold text-slate-900">Recent Moodle Submissions</h3>
-            <p className="text-xs text-slate-500">Live incoming test results synchronized from Moodle</p>
+            <h3 className="text-base font-bold text-[#F0F0F0]">Recent Test Submissions</h3>
+            <p className="text-xs text-[#A0A0A0]">Real-time test results synchronized from Moodle</p>
           </div>
-          <span className="text-xs text-indigo-600 font-medium">Auto-syncing via n8n</span>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30">
+            Auto-syncing via n8n
+          </span>
         </div>
 
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-[#2A2A2A]">
           {attempts.slice(0, 5).map((attempt) => {
             const student = students.find((s) => s.id === attempt.student_id);
             const quiz = quizzes.find((q) => q.id === attempt.quiz_id);
@@ -143,24 +145,24 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
               <div
                 key={attempt.id}
                 onClick={() => onSelectStudent(attempt.student_id)}
-                className="py-3.5 flex items-center justify-between hover:bg-slate-50 px-2 rounded-xl cursor-pointer transition-colors"
+                className="py-3.5 flex items-center justify-between hover:bg-[#242424] px-3 rounded-xl cursor-pointer transition-colors"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-semibold flex items-center justify-center text-xs">
+                  <div className="w-9 h-9 rounded-full bg-[#242424] border border-[#333333] text-[#F40009] font-bold flex items-center justify-center text-xs">
                     {student?.full_name.charAt(0) || 'S'}
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-slate-900 hover:text-indigo-600">
+                    <h4 className="text-sm font-semibold text-[#F0F0F0] hover:text-[#F40009] transition-colors">
                       {student?.full_name || 'Unknown Student'}
                     </h4>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#A0A0A0]">
                       {quiz?.quiz_name || 'Quiz Assessment'}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1 text-xs text-slate-400 hidden sm:flex">
+                  <div className="flex items-center space-x-1 text-xs text-[#777777] hidden sm:flex">
                     <Clock className="w-3.5 h-3.5" />
                     <span>{dateFormatted}</span>
                   </div>
@@ -168,10 +170,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                     <span
                       className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${
                         attempt.percentage >= 80
-                          ? 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                           : attempt.percentage >= 60
-                          ? 'bg-indigo-100 text-indigo-800'
-                          : 'bg-rose-100 text-rose-800'
+                          ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                          : 'bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30'
                       }`}
                     >
                       {attempt.percentage}%
