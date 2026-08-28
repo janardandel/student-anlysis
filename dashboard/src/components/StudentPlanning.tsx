@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClipboardList, Plus, AlertCircle, CheckCircle, Clock, Sparkles } from 'lucide-react';
+import { ClipboardList, Plus, CheckCircle, Sparkles } from 'lucide-react';
 import { Student, StudentPlan, QuizAttempt } from '../types';
 
 interface StudentPlanningProps {
