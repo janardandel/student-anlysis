@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Award, CheckCircle, Clock, BookOpen } from 'lucide-react';
+import { X, Award } from 'lucide-react';
 import { Student, QuizAttempt, Quiz, StudentPlan } from '../types';
 
 interface StudentDetailModalProps {
