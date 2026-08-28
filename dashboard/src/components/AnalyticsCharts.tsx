@@ -10,7 +10,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from 'recharts';
 import { QuizAttempt, Quiz, Student } from '../types';
 
@@ -56,12 +55,6 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
       submissions: quizAttempts.length,
     };
   });
-
-  // 3. Status Breakdown for Donut Chart
-  const statusCounts = [
-    { name: 'Passed', value: attempts.filter((a) => a.percentage >= 60).length, color: '#10b981' },
-    { name: 'Failed', value: attempts.filter((a) => a.percentage < 60).length, color: '#f43f5e' },
-  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
