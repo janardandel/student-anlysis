@@ -95,7 +95,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `moodle_test_reports_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `pitthugram_test_reports_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -104,15 +104,15 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   return (
     <div className="space-y-4">
       {/* Search and Filters Bar */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+      <div className="bg-[#1A1A1A] rounded-2xl p-4 border border-[#2A2A2A] shadow-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-3 text-[#777777]" />
           <input
             type="text"
-            placeholder="Search student, email, or quiz..."
+            placeholder="Search student, email, or test..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            className="w-full pl-10 pr-4 py-2 text-sm bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] placeholder-[#777777] focus:outline-none focus:border-[#F40009] focus:ring-2 focus:ring-[#F40009]/20 transition-all"
           />
         </div>
 
@@ -121,7 +121,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
-            className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-3 py-2 text-xs bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] font-semibold focus:outline-none focus:border-[#F40009]"
           >
             <option value="all">All Courses</option>
             {courses.map((c) => (
@@ -135,9 +135,9 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           <select
             value={selectedQuiz}
             onChange={(e) => setSelectedQuiz(e.target.value)}
-            className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-3 py-2 text-xs bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] font-semibold focus:outline-none focus:border-[#F40009]"
           >
-            <option value="all">All Quizzes</option>
+            <option value="all">All Tests</option>
             {quizzes.map((q) => (
               <option key={q.id} value={q.id}>
                 {q.quiz_name}
@@ -149,7 +149,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-3 py-2 text-xs bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] font-semibold focus:outline-none focus:border-[#F40009]"
           >
             <option value="all">All Results</option>
             <option value="passed">Passed ($\ge$60%)</option>
@@ -159,43 +159,43 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           {/* Export CSV */}
           <button
             onClick={exportToCSV}
-            className="flex items-center space-x-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#242424] hover:bg-[#333333] text-[#F0F0F0] border border-[#333333] rounded-xl text-xs font-bold transition-all"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5 text-[#F40009]" />
             <span>Export CSV</span>
           </button>
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div className="bg-[#1A1A1A] rounded-2xl border border-[#2A2A2A] shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <tr className="bg-[#161616] border-b border-[#2A2A2A] text-xs font-bold text-[#A0A0A0] uppercase tracking-wider">
                 <th
                   onClick={() => {
                     if (sortBy === 'name') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                     else { setSortBy('name'); setSortOrder('asc'); }
                   }}
-                  className="py-3.5 px-4 cursor-pointer hover:text-slate-900"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Student</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-4">Quiz / Assessment</th>
+                <th className="py-3.5 px-4">Test / Assessment</th>
                 <th
                   onClick={() => {
                     if (sortBy === 'score') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                     else { setSortBy('score'); setSortOrder('desc'); }
                   }}
-                  className="py-3.5 px-4 cursor-pointer hover:text-slate-900"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Score & Mastery</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
                 <th className="py-3.5 px-4">Status</th>
@@ -204,21 +204,21 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                     if (sortBy === 'date') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
                     else { setSortBy('date'); setSortOrder('desc'); }
                   }}
-                  className="py-3.5 px-4 cursor-pointer hover:text-slate-900"
+                  className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
                     <span>Submission Date</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
                 <th className="py-3.5 px-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
+            <tbody className="divide-y divide-[#2A2A2A] text-sm">
               {filteredAttempts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-slate-400 text-sm">
-                    No quiz submissions found matching your filters.
+                  <td colSpan={6} className="py-8 text-center text-[#777777] text-sm">
+                    No test submissions found matching your filters.
                   </td>
                 </tr>
               ) : (
@@ -231,39 +231,39 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                     <tr
                       key={attempt.id}
                       onClick={() => onSelectStudent(attempt.student_id)}
-                      className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
+                      className="hover:bg-[#242424] cursor-pointer transition-colors group"
                     >
                       {/* Student info */}
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-900 group-hover:text-indigo-600">
+                        <div className="font-bold text-[#F0F0F0] group-hover:text-[#F40009] transition-colors">
                           {student?.full_name || 'Student'}
                         </div>
-                        <div className="text-xs text-slate-500">{student?.email}</div>
+                        <div className="text-xs text-[#A0A0A0]">{student?.email}</div>
                       </td>
 
                       {/* Quiz info */}
                       <td className="py-3.5 px-4">
-                        <div className="font-medium text-slate-800">{quiz?.quiz_name || 'Assessment'}</div>
-                        <div className="text-xs text-slate-400">Attempt #{attempt.attempt_number}</div>
+                        <div className="font-semibold text-[#F0F0F0]">{quiz?.quiz_name || 'Assessment'}</div>
+                        <div className="text-xs text-[#777777]">Attempt #{attempt.attempt_number}</div>
                       </td>
 
                       {/* Score */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-2">
-                          <span className="font-bold text-slate-900">{attempt.percentage}%</span>
-                          <span className="text-xs text-slate-400">
+                          <span className="font-extrabold text-[#F0F0F0]">{attempt.percentage}%</span>
+                          <span className="text-xs text-[#777777]">
                             ({attempt.score_obtained}/{attempt.max_score} pts)
                           </span>
                         </div>
                         {/* Progress Bar */}
-                        <div className="w-24 bg-slate-100 rounded-full h-1.5 mt-1 overflow-hidden">
+                        <div className="w-24 bg-[#2A2A2A] rounded-full h-1.5 mt-1 overflow-hidden">
                           <div
                             className={`h-full rounded-full ${
                               attempt.percentage >= 80
                                 ? 'bg-emerald-500'
                                 : attempt.percentage >= 60
-                                ? 'bg-indigo-500'
-                                : 'bg-rose-500'
+                                ? 'bg-blue-500'
+                                : 'bg-[#F40009]'
                             }`}
                             style={{ width: `${Math.min(attempt.percentage, 100)}%` }}
                           />
@@ -273,10 +273,10 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                       {/* Status */}
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
                             isPassed
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                              : 'bg-rose-50 text-rose-700 border border-rose-200/50'
+                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30'
                           }`}
                         >
                           {isPassed ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
@@ -285,7 +285,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                       </td>
 
                       {/* Date */}
-                      <td className="py-3.5 px-4 text-xs text-slate-500">
+                      <td className="py-3.5 px-4 text-xs text-[#A0A0A0]">
                         {new Date(attempt.submitted_at).toLocaleDateString([], {
                           month: 'short',
                           day: 'numeric',
@@ -299,8 +299,8 @@ export const StudentTable: React.FC<StudentTableProps> = ({
 
                       {/* Action */}
                       <td className="py-3.5 px-4 text-right">
-                        <span className="inline-flex items-center text-xs font-medium text-indigo-600 group-hover:translate-x-0.5 transition-transform">
-                          Plan & Analyze <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                        <span className="inline-flex items-center text-xs font-bold text-[#F40009] group-hover:translate-x-0.5 transition-transform">
+                          Plan & Review <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
                         </span>
                       </td>
                     </tr>
