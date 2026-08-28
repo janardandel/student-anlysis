@@ -1,16 +1,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Default / fallback keys or environment variables
-const ENV_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
-const ENV_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Default Supabase project credentials
+const DEFAULT_SUPABASE_URL = 'https://gedxdhkglumankcscvxs.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_1Laq6Og0yTS_OhYycXCeXg_FwWog21W';
 
-// Stored settings from localStorage if configured in the browser UI
+// Stored settings from localStorage if configured/overridden in the browser UI
 const STORAGE_KEY_URL = 'moodle_reporting_supabase_url';
 const STORAGE_KEY_KEY = 'moodle_reporting_supabase_anon_key';
 
 export function getSavedCredentials() {
-  const url = localStorage.getItem(STORAGE_KEY_URL) || ENV_SUPABASE_URL;
-  const anonKey = localStorage.getItem(STORAGE_KEY_KEY) || ENV_SUPABASE_ANON_KEY;
+  const url = localStorage.getItem(STORAGE_KEY_URL) || DEFAULT_SUPABASE_URL;
+  const anonKey = localStorage.getItem(STORAGE_KEY_KEY) || DEFAULT_SUPABASE_ANON_KEY;
   return { url, anonKey };
 }
 
