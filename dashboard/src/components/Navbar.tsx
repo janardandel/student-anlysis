@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Users, ClipboardList, Settings, Database, RefreshCw, Flame } from 'lucide-react';
+import { LayoutDashboard, Users, ClipboardList, Settings, Database, RefreshCw } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: 'overview' | 'students' | 'planning';
@@ -24,19 +24,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-16">
           {/* Pitthugram Brand Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#A30006] to-[#F40009] flex items-center justify-center text-white font-black text-lg shadow-lg shadow-[#F40009]/20 border border-[#F40009]/40">
-              <Flame className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-lg font-extrabold text-[#F0F0F0] tracking-tight">
-                  Pitthugram <span className="text-[#F40009]">LMS</span>
-                </span>
-                <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30">
-                  Reports
-                </span>
-              </div>
-              <p className="text-[11px] text-[#A0A0A0] hidden sm:block">Digital Platform for Coaching & Student Planning</p>
+            <a href="#" className="flex items-center gap-2.5">
+              <img
+                src="./logo.png"
+                alt="Pitthugram"
+                className="h-8 sm:h-9 w-auto rounded-md shadow-pitthu-red border border-[#F40009]/40 transition-transform hover:scale-105"
+              />
+            </a>
+            <div className="hidden md:flex items-center space-x-2 pl-2 border-l border-[#2A2A2A]">
+              <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F40009]/15 text-[#F40009] border border-[#F40009]/30">
+                Analytics & Planning
+              </span>
             </div>
           </div>
 
