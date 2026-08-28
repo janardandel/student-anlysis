@@ -114,7 +114,7 @@ export function App() {
   const selectedStudentPlan = plans.find((p) => p.student_id === selectedStudentId);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#0D0D0D] text-[#F0F0F0] flex flex-col selection:bg-[#F40009] selection:text-white">
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -124,13 +124,13 @@ export function App() {
         isRefreshing={isRefreshing}
       />
 
-      {/* Demo Mode Notice Banner */}
+      {/* Demo Mode Notice Banner in Pitthugram style */}
       {!isLiveMode && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-between">
+        <div className="bg-[#1A1A1A] border-b border-[#2A2A2A] px-4 py-2 text-xs text-[#A0A0A0] flex items-center justify-between">
           <div className="flex items-center space-x-2 max-w-7xl mx-auto w-full">
-            <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 text-[#F40009] flex-shrink-0" />
             <span>
-              <strong>Preview Mode:</strong> Currently displaying sample Moodle test submissions. Connect your Supabase instance anytime in Settings.
+              <strong className="text-[#F0F0F0]">Preview Mode:</strong> Currently displaying sample Moodle test submissions. Connect your Supabase instance anytime in Settings.
             </span>
           </div>
         </div>
