@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { DashboardOverview } from './components/DashboardOverview';
 import { StudentTable } from './components/StudentTable';
@@ -176,7 +176,7 @@ export function App() {
         quizzes={quizzes}
         plan={selectedStudentPlan}
         onClose={() => setSelectedStudentId(null)}
-        onOpenPlanning={(id) => {
+        onOpenPlanning={() => {
           setSelectedStudentId(null);
           setActiveTab('planning');
         }}
