@@ -7,6 +7,8 @@ interface StudentTableProps {
   attempts: QuizAttempt[];
   quizzes: Quiz[];
   courses: Course[];
+  classes: string[];
+  selectedClass: string;
   onSelectStudent: (studentId: string) => void;
 }
 
@@ -15,9 +17,12 @@ export const StudentTable: React.FC<StudentTableProps> = ({
   attempts,
   quizzes,
   courses,
+  classes,
+  selectedClass,
   onSelectStudent,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [classFilter, setClassFilter] = useState<string>(selectedClass || 'all');
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
   const [selectedQuiz, setSelectedQuiz] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -29,11 +34,17 @@ export const StudentTable: React.FC<StudentTableProps> = ({
     const student = students.find((s) => s.id === attempt.student_id);
     const quiz = quizzes.find((q) => q.id === attempt.quiz_id);
 
-    // Search filter
+    // Search filter (Name, Email, Roll No, Quiz, Class)
     const matchesSearch =
       student?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (student?.roll_no && student.roll_no.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (student?.class_name && student.class_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
       quiz?.quiz_name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Class filter
+    const currentClass = student?.class_name || attempt.class_name || 'General';
+    const matchesClass = classFilter === 'all' || currentClass === classFilter;
 
     // Course filter
     const matchesCourse =
@@ -49,7 +60,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
       (selectedStatus === 'passed' && attempt.percentage >= 60) ||
       (selectedStatus === 'failed' && attempt.percentage < 60);
 
-    return matchesSearch && matchesCourse && matchesQuiz && matchesStatus;
+    return matchesSearch && matchesClass && matchesCourse && matchesQuiz && matchesStatus;
   });
 
   // Sort filtered attempts
@@ -75,12 +86,14 @@ export const StudentTable: React.FC<StudentTableProps> = ({
 
   // CSV Export Function
   const exportToCSV = () => {
-    const headers = ['Student Name', 'Email', 'Quiz Name', 'Score', 'Max Score', 'Percentage', 'Status', 'Submitted At'];
+    const headers = ['Student Name', 'Roll No', 'Class/Batch', 'Email', 'Test Name', 'Score', 'Max Score', 'Percentage', 'Status', 'Submitted At'];
     const rows = filteredAttempts.map((a) => {
       const student = students.find((s) => s.id === a.student_id);
       const quiz = quizzes.find((q) => q.id === a.quiz_id);
       return [
         `"${student?.full_name || ''}"`,
+        `"${student?.roll_no || ''}"`,
+        `"${student?.class_name || a.class_name || ''}"`,
         `"${student?.email || ''}"`,
         `"${quiz?.quiz_name || ''}"`,
         a.score_obtained,
@@ -95,7 +108,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `pitthugram_test_reports_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `coaching_reports_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -109,7 +122,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
           <Search className="w-4 h-4 absolute left-3.5 top-3 text-[#777777]" />
           <input
             type="text"
-            placeholder="Search student, email, or test..."
+            placeholder="Search student, roll no, test, or class..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-sm bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] placeholder-[#777777] focus:outline-none focus:border-[#F40009] focus:ring-2 focus:ring-[#F40009]/20 transition-all"
@@ -117,16 +130,16 @@ export const StudentTable: React.FC<StudentTableProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Course Filter */}
+          {/* Class Filter */}
           <select
-            value={selectedCourse}
-            onChange={(e) => setSelectedCourse(e.target.value)}
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
             className="px-3 py-2 text-xs bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] font-semibold focus:outline-none focus:border-[#F40009]"
           >
-            <option value="all">All Courses</option>
-            {courses.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.short_name || c.course_name}
+            <option value="all">📚 All Classes / Batches</option>
+            {classes.map((c) => (
+              <option key={c} value={c}>
+                {c}
               </option>
             ))}
           </select>
@@ -137,7 +150,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
             onChange={(e) => setSelectedQuiz(e.target.value)}
             className="px-3 py-2 text-xs bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] font-semibold focus:outline-none focus:border-[#F40009]"
           >
-            <option value="all">All Tests</option>
+            <option value="all">📝 All Tests</option>
             {quizzes.map((q) => (
               <option key={q.id} value={q.id}>
                 {q.quiz_name}
@@ -181,11 +194,12 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
-                    <span>Student</span>
+                    <span>Student & Roll No</span>
                     <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
-                <th className="py-3.5 px-4">Test / Assessment</th>
+                <th className="py-3.5 px-4">Class / Batch</th>
+                <th className="py-3.5 px-4">Test Assessment</th>
                 <th
                   onClick={() => {
                     if (sortBy === 'score') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -194,7 +208,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
-                    <span>Score & Mastery</span>
+                    <span>Score & Progress</span>
                     <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
@@ -207,7 +221,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   className="py-3.5 px-4 cursor-pointer hover:text-[#F0F0F0]"
                 >
                   <div className="flex items-center space-x-1">
-                    <span>Submission Date</span>
+                    <span>Submission</span>
                     <ArrowUpDown className="w-3 h-3 text-[#777777]" />
                   </div>
                 </th>
@@ -217,7 +231,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
             <tbody className="divide-y divide-[#2A2A2A] text-sm">
               {filteredAttempts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-[#777777] text-sm">
+                  <td colSpan={7} className="py-8 text-center text-[#777777] text-sm">
                     No test submissions found matching your filters.
                   </td>
                 </tr>
@@ -226,6 +240,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   const student = students.find((s) => s.id === attempt.student_id);
                   const quiz = quizzes.find((q) => q.id === attempt.quiz_id);
                   const isPassed = attempt.percentage >= 60;
+                  const displayClass = student?.class_name || attempt.class_name || 'General';
 
                   return (
                     <tr
@@ -235,10 +250,24 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                     >
                       {/* Student info */}
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-[#F0F0F0] group-hover:text-[#F40009] transition-colors">
-                          {student?.full_name || 'Student'}
+                        <div className="flex items-center space-x-2">
+                          <div className="font-bold text-[#F0F0F0] group-hover:text-[#F40009] transition-colors">
+                            {student?.full_name || 'Student'}
+                          </div>
+                          {student?.roll_no && (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#161616] text-[#A0A0A0] border border-[#333333]">
+                              {student.roll_no}
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs text-[#A0A0A0]">{student?.email}</div>
+                      </td>
+
+                      {/* Class */}
+                      <td className="py-3.5 px-4">
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-[#242424] text-[#F0F0F0] border border-[#333333]">
+                          {displayClass}
+                        </span>
                       </td>
 
                       {/* Quiz info */}
@@ -289,18 +318,13 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                         {new Date(attempt.submitted_at).toLocaleDateString([], {
                           month: 'short',
                           day: 'numeric',
-                          year: 'numeric',
-                        })}{' '}
-                        {new Date(attempt.submitted_at).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
                         })}
                       </td>
 
                       {/* Action */}
                       <td className="py-3.5 px-4 text-right">
                         <span className="inline-flex items-center text-xs font-bold text-[#F40009] group-hover:translate-x-0.5 transition-transform">
-                          Plan & Review <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                          Student Profile <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
                         </span>
                       </td>
                     </tr>
