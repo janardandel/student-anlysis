@@ -6,6 +6,7 @@ interface StudentPlanningProps {
   students: Student[];
   plans: StudentPlan[];
   attempts: QuizAttempt[];
+  selectedClass: string;
   onSavePlan: (plan: Partial<StudentPlan>) => void;
   onSelectStudent: (studentId: string) => void;
 }
@@ -14,6 +15,7 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
   students,
   plans,
   attempts,
+  selectedClass,
   onSavePlan,
 }) => {
   const [selectedStudentId, setSelectedStudentId] = useState<string>(
@@ -56,10 +58,12 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
     if (!selectedStudentId) return;
 
     const existing = plans.find((p) => p.student_id === selectedStudentId);
+    const student = students.find((s) => s.id === selectedStudentId);
 
     onSavePlan({
       id: existing?.id,
       student_id: selectedStudentId,
+      institute_id: student?.institute_id,
       risk_level: riskLevel,
       status: status,
       target_goal: targetGoal,
@@ -84,10 +88,10 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
           <div>
             <div className="flex items-center space-x-2">
               <Flame className="w-6 h-6 text-white" />
-              <h2 className="text-xl font-black tracking-tight">Student Planning & Intervention System</h2>
+              <h2 className="text-xl font-black tracking-tight">Student Planning & Remediation System</h2>
             </div>
             <p className="text-sm text-red-100 mt-1">
-              Create individualized remediation strategies, assign milestone goals, and record coaching notes.
+              Create individualized remediation strategies, assign milestone goals, and log teacher observation notes.
             </p>
           </div>
           <div className="flex items-center space-x-3 bg-black/30 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10">
@@ -118,7 +122,7 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
               >
                 {students.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.full_name} ({s.department || 'Student'})
+                    {s.full_name} ({s.class_name || 'Student'})
                   </option>
                 ))}
               </select>
@@ -166,7 +170,7 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="e.g. Achieve >70% on Quiz 3 Recursion module"
+                placeholder="e.g. Achieve >70% on next Class Assessment"
                 value={targetGoal}
                 onChange={(e) => setTargetGoal(e.target.value)}
                 className="w-full px-3 py-2 text-sm bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] placeholder-[#777777] focus:border-[#F40009] focus:ring-2 focus:ring-[#F40009]/20"
@@ -176,11 +180,11 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
             {/* Action Plan */}
             <div>
               <label className="block text-xs font-bold text-[#A0A0A0] uppercase tracking-wider mb-1">
-                Remedial / Action Steps
+                Remedial Action Steps
               </label>
               <textarea
                 rows={3}
-                placeholder="e.g. Schedule 1-on-1 tutoring session. Assign 3 extra practice questions on Moodle."
+                placeholder="e.g. Schedule 1-on-1 tutoring. Assign 3 extra practice questions."
                 value={actionPlan}
                 onChange={(e) => setActionPlan(e.target.value)}
                 className="w-full px-3 py-2 text-sm bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] placeholder-[#777777] focus:border-[#F40009] focus:ring-2 focus:ring-[#F40009]/20"
@@ -190,11 +194,11 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
             {/* Teacher Notes */}
             <div>
               <label className="block text-xs font-bold text-[#A0A0A0] uppercase tracking-wider mb-1">
-                Observation Notes
+                Teacher Observation Notes
               </label>
               <textarea
                 rows={2}
-                placeholder="Private observation notes for teacher review..."
+                placeholder="Private observation notes for coaching staff..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 className="w-full px-3 py-2 text-sm bg-[#242424] border border-[#333333] rounded-xl text-[#F0F0F0] placeholder-[#777777] focus:border-[#F40009] focus:ring-2 focus:ring-[#F40009]/20"
@@ -222,11 +226,11 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#2A2A2A] shadow-xl">
             <h3 className="text-base font-bold text-[#F0F0F0] mb-4">
-              Active Intervention Tracker ({activePlans.length})
+              Active Remediation Tracker ({activePlans.length})
             </h3>
 
             {activePlans.length === 0 ? (
-              <p className="text-sm text-[#777777] py-6 text-center">No active student plans yet.</p>
+              <p className="text-sm text-[#777777] py-6 text-center">No active student plans for this selection.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {activePlans.map((plan) => {
@@ -267,7 +271,12 @@ export const StudentPlanning: React.FC<StudentPlanningProps> = ({
                         </div>
 
                         <div className="text-xs text-[#A0A0A0] mb-3 flex items-center space-x-2">
-                          <span>Average: <strong className="text-[#F0F0F0]">{avg}%</strong></span>
+                          {student?.class_name && (
+                            <span className="px-1.5 py-0.2 rounded bg-[#242424] text-[#F0F0F0] font-semibold border border-[#333333]">
+                              {student.class_name}
+                            </span>
+                          )}
+                          <span>Avg: <strong className="text-[#F0F0F0]">{avg}%</strong></span>
                           <span>•</span>
                           <span className="capitalize text-[#F40009] font-semibold">
                             {plan.status.replace('_', ' ')}
