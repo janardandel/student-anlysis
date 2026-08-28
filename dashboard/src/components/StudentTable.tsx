@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Download, ArrowUpDown, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
+import { Search, Download, ArrowUpDown, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
 import { Student, QuizAttempt, Quiz, Course } from '../types';
 
 interface StudentTableProps {
