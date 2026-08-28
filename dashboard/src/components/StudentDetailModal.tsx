@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Award } from 'lucide-react';
+import { X, Award, GraduationCap, Printer } from 'lucide-react';
 import { Student, QuizAttempt, Quiz, StudentPlan } from '../types';
 
 interface StudentDetailModalProps {
@@ -29,6 +29,11 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
       : 0;
   const highestScore =
     totalAttempts > 0 ? Math.max(...studentAttempts.map((a) => a.percentage)) : 0;
+  const passedAttempts = studentAttempts.filter((a) => a.percentage >= 60).length;
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -36,20 +41,38 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
         {/* Header */}
         <div className="px-6 py-4 border-b border-[#2A2A2A] flex items-center justify-between bg-[#1A1A1A]">
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 rounded-full bg-[#F40009] text-white font-bold flex items-center justify-center text-base shadow-pitthu-red">
+            <div className="w-12 h-12 rounded-full bg-[#F40009] text-white font-black flex items-center justify-center text-lg shadow-pitthu-red">
               {student.full_name.charAt(0)}
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#F0F0F0]">{student.full_name}</h3>
-              <p className="text-xs text-[#A0A0A0]">{student.email} • ID: {student.moodle_user_id}</p>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-base font-extrabold text-[#F0F0F0]">{student.full_name}</h3>
+                {student.roll_no && (
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-[#242424] text-[#A0A0A0] border border-[#333333] font-bold">
+                    Roll: {student.roll_no}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[#A0A0A0] mt-0.5">
+                {student.class_name || 'Class Batch'} • {student.email}
+              </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-[#777777] hover:text-[#F0F0F0] rounded-lg hover:bg-[#242424] transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handlePrint}
+              title="Print Student Report"
+              className="p-2 text-[#A0A0A0] hover:text-[#F0F0F0] rounded-lg hover:bg-[#242424] transition-colors border border-[#2A2A2A]"
+            >
+              <Printer className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 text-[#777777] hover:text-[#F0F0F0] rounded-lg hover:bg-[#242424] transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
@@ -57,7 +80,7 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
           {/* Quick Metrics */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#2A2A2A] text-center">
-              <span className="text-xs text-[#A0A0A0] font-semibold">Average Score</span>
+              <span className="text-xs text-[#A0A0A0] font-semibold">Average Mastery</span>
               <p className="text-xl font-extrabold text-[#F40009] mt-0.5">{avgScore}%</p>
             </div>
             <div className="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#2A2A2A] text-center">
@@ -65,8 +88,8 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
               <p className="text-xl font-extrabold text-emerald-400 mt-0.5">{highestScore}%</p>
             </div>
             <div className="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#2A2A2A] text-center">
-              <span className="text-xs text-[#A0A0A0] font-semibold">Tests Completed</span>
-              <p className="text-xl font-extrabold text-[#F0F0F0] mt-0.5">{totalAttempts}</p>
+              <span className="text-xs text-[#A0A0A0] font-semibold">Tests Passed</span>
+              <p className="text-xl font-extrabold text-[#F0F0F0] mt-0.5">{passedAttempts} / {totalAttempts}</p>
             </div>
           </div>
 
@@ -111,7 +134,7 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
           {/* Attempt History Table */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#A0A0A0] mb-2.5">
-              Test Submissions & Scores
+              Test Performance & Attempt Trajectory
             </h4>
             <div className="border border-[#2A2A2A] rounded-xl overflow-hidden divide-y divide-[#2A2A2A] text-xs">
               {studentAttempts.map((attempt) => {
@@ -119,7 +142,7 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
                 const isPassed = attempt.percentage >= 60;
 
                 return (
-                  <div key={attempt.id} className="p-3 flex items-center justify-between bg-[#1A1A1A]">
+                  <div key={attempt.id} className="p-3.5 flex items-center justify-between bg-[#1A1A1A]">
                     <div>
                       <div className="font-bold text-[#F0F0F0]">{quiz?.quiz_name || 'Quiz'}</div>
                       <div className="text-[#777777] mt-0.5 flex items-center space-x-2">
@@ -154,7 +177,8 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-[#2A2A2A] bg-[#1A1A1A] flex justify-end">
+        <div className="px-6 py-3 border-t border-[#2A2A2A] bg-[#1A1A1A] flex justify-between items-center">
+          <span className="text-[11px] text-[#777777]">Pitthugram Coaching Analytics</span>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-[#242424] hover:bg-[#333333] text-[#F0F0F0] font-semibold rounded-xl text-xs transition-colors border border-[#333333]"
