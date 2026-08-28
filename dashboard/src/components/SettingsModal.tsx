@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Database, Check, AlertCircle, Trash2 } from 'lucide-react';
+import { X, Database, Check, Trash2 } from 'lucide-react';
 import { getSavedCredentials, saveCredentials, clearCredentials, resetSupabaseClient } from '../lib/supabase';
 
 interface SettingsModalProps {
