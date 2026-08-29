@@ -2,8 +2,16 @@ import { Institute, Course, Student, Quiz, QuizAttempt, StudentPlan } from '../t
 
 export const mockInstitutes: Institute[] = [
   {
+    id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    name: 'Pitthugram LMS (cx001)',
+    code: 'CX001_PITTHU',
+    city: 'Delhi NCR',
+    moodle_url: 'https://cx001.pitthugram.com',
+    created_at: new Date().toISOString(),
+  },
+  {
     id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    name: 'Pitthugram Super 30 Institute',
+    name: 'Pitthugram Super 30 Academy',
     code: 'PITTHU_S30',
     city: 'Noida',
     moodle_url: 'https://lms.pitthugram.com',
@@ -20,40 +28,38 @@ export const mockInstitutes: Institute[] = [
 ];
 
 export const mockCourses: Course[] = [
-  // Institute 1: Pitthugram
   {
     id: 'c1',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_course_id: 101,
-    course_name: 'JEE Physics & Advanced Mechanics',
-    short_name: 'JEE-PHY',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_course_id: 1001,
+    course_name: 'Class 12 Advanced JEE Physics',
+    short_name: 'JEE-PHY-12',
     class_name: 'Class 12 - JEE Advanced',
     created_at: new Date().toISOString(),
   },
   {
     id: 'c2',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_course_id: 102,
-    course_name: 'JEE Mathematics & Calculus',
-    short_name: 'JEE-MATH',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_course_id: 1002,
+    course_name: 'Class 12 Mathematics & Calculus',
+    short_name: 'JEE-MATH-12',
     class_name: 'Class 12 - JEE Advanced',
     created_at: new Date().toISOString(),
   },
-  // Institute 2: Apex Coaching
   {
     id: 'c3',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_course_id: 501,
-    course_name: 'NEET Physics: Mechanics & Optics',
-    short_name: 'NEET-PHY',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_course_id: 1003,
+    course_name: 'Class 11 NEET Droppers Physics',
+    short_name: 'NEET-PHY-11',
     class_name: 'Class 11 - NEET Droppers',
     created_at: new Date().toISOString(),
   },
   {
     id: 'c4',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_course_id: 502,
-    course_name: 'Class 10 Science & Mathematics',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_course_id: 1004,
+    course_name: 'Class 10 Foundation Math & Science',
     short_name: 'C10-FOUND',
     class_name: 'Class 10 - Foundation',
     created_at: new Date().toISOString(),
@@ -61,12 +67,11 @@ export const mockCourses: Course[] = [
 ];
 
 export const mockStudents: Student[] = [
-  // Pitthugram Students
   {
     id: 's1',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_user_id: 201,
-    email: 'alex.smith@pitthugram.edu',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2001,
+    email: 'alex.smith@pitthugram.com',
     full_name: 'Alex Smith',
     class_name: 'Class 12 - JEE Advanced',
     roll_no: 'JEE-001',
@@ -75,9 +80,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's2',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_user_id: 202,
-    email: 'maria.garcia@pitthugram.edu',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2002,
+    email: 'maria.garcia@pitthugram.com',
     full_name: 'Maria Garcia',
     class_name: 'Class 12 - JEE Advanced',
     roll_no: 'JEE-002',
@@ -86,9 +91,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's3',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_user_id: 203,
-    email: 'sam.wilson@pitthugram.edu',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2003,
+    email: 'sam.wilson@pitthugram.com',
     full_name: 'Sam Wilson',
     class_name: 'Class 12 - JEE Advanced',
     roll_no: 'JEE-003',
@@ -97,9 +102,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's4',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_user_id: 204,
-    email: 'elena.rostova@pitthugram.edu',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2004,
+    email: 'elena.rostova@pitthugram.com',
     full_name: 'Elena Rostova',
     class_name: 'Class 12 - JEE Advanced',
     roll_no: 'JEE-004',
@@ -108,21 +113,20 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's5',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_user_id: 205,
-    email: 'david.chen@pitthugram.edu',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2005,
+    email: 'david.chen@pitthugram.com',
     full_name: 'David Chen',
     class_name: 'Class 12 - JEE Advanced',
     roll_no: 'JEE-005',
     department: 'Engineering',
     created_at: new Date().toISOString(),
   },
-  // Apex Coaching Students
   {
     id: 's6',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_user_id: 601,
-    email: 'rahul.sharma@apex.in',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2006,
+    email: 'rahul.sharma@pitthugram.com',
     full_name: 'Rahul Sharma',
     class_name: 'Class 11 - NEET Droppers',
     roll_no: 'APX-101',
@@ -131,9 +135,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's7',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_user_id: 602,
-    email: 'priya.verma@apex.in',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2007,
+    email: 'priya.verma@pitthugram.com',
     full_name: 'Priya Verma',
     class_name: 'Class 11 - NEET Droppers',
     roll_no: 'APX-102',
@@ -142,9 +146,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's8',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_user_id: 603,
-    email: 'ananya.singh@apex.in',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2008,
+    email: 'ananya.singh@pitthugram.com',
     full_name: 'Ananya Singh',
     class_name: 'Class 10 - Foundation',
     roll_no: 'APX-201',
@@ -153,9 +157,9 @@ export const mockStudents: Student[] = [
   },
   {
     id: 's9',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_user_id: 604,
-    email: 'vikram.aditya@apex.in',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_user_id: 2009,
+    email: 'vikram.aditya@pitthugram.com',
     full_name: 'Vikram Aditya',
     class_name: 'Class 10 - Foundation',
     roll_no: 'APX-202',
@@ -165,11 +169,10 @@ export const mockStudents: Student[] = [
 ];
 
 export const mockQuizzes: Quiz[] = [
-  // Pitthugram Quizzes
   {
     id: 'q1',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_quiz_id: 301,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_quiz_id: 3001,
     course_id: 'c1',
     quiz_name: 'JEE Physics: Rotational Dynamics',
     class_name: 'Class 12 - JEE Advanced',
@@ -179,8 +182,8 @@ export const mockQuizzes: Quiz[] = [
   },
   {
     id: 'q2',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_quiz_id: 302,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_quiz_id: 3002,
     course_id: 'c2',
     quiz_name: 'JEE Maths: Definite Integration',
     class_name: 'Class 12 - JEE Advanced',
@@ -188,11 +191,10 @@ export const mockQuizzes: Quiz[] = [
     passing_score: 60,
     created_at: new Date().toISOString(),
   },
-  // Apex Quizzes
   {
     id: 'q3',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_quiz_id: 701,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_quiz_id: 3003,
     course_id: 'c3',
     quiz_name: 'NEET Assessment 1: Newton Laws',
     class_name: 'Class 11 - NEET Droppers',
@@ -202,8 +204,8 @@ export const mockQuizzes: Quiz[] = [
   },
   {
     id: 'q4',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_quiz_id: 702,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_quiz_id: 3004,
     course_id: 'c4',
     quiz_name: 'Class 10 Term 1: Quadratic Equations',
     class_name: 'Class 10 - Foundation',
@@ -214,11 +216,10 @@ export const mockQuizzes: Quiz[] = [
 ];
 
 export const mockAttempts: QuizAttempt[] = [
-  // Pitthugram Attempts
   {
     id: 'a1',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4001,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6001,
     student_id: 's1',
     quiz_id: 'q1',
     class_name: 'Class 12 - JEE Advanced',
@@ -232,8 +233,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a2',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4002,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6002,
     student_id: 's2',
     quiz_id: 'q1',
     class_name: 'Class 12 - JEE Advanced',
@@ -247,8 +248,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a3',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4003,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6003,
     student_id: 's3',
     quiz_id: 'q1',
     class_name: 'Class 12 - JEE Advanced',
@@ -262,8 +263,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a4',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4004,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6004,
     student_id: 's4',
     quiz_id: 'q1',
     class_name: 'Class 12 - JEE Advanced',
@@ -277,8 +278,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a5',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4005,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6005,
     student_id: 's5',
     quiz_id: 'q1',
     class_name: 'Class 12 - JEE Advanced',
@@ -292,8 +293,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a6',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4006,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6006,
     student_id: 's1',
     quiz_id: 'q2',
     class_name: 'Class 12 - JEE Advanced',
@@ -307,8 +308,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a7',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4007,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6007,
     student_id: 's2',
     quiz_id: 'q2',
     class_name: 'Class 12 - JEE Advanced',
@@ -322,8 +323,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a8',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    moodle_attempt_id: 4008,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6008,
     student_id: 's3',
     quiz_id: 'q2',
     class_name: 'Class 12 - JEE Advanced',
@@ -335,11 +336,10 @@ export const mockAttempts: QuizAttempt[] = [
     time_taken_seconds: 2300,
     submitted_at: new Date(Date.now() - 12 * 3600000).toISOString(),
   },
-  // Apex Attempts
   {
     id: 'a9',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_attempt_id: 5001,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6009,
     student_id: 's6',
     quiz_id: 'q3',
     class_name: 'Class 11 - NEET Droppers',
@@ -353,8 +353,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a10',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_attempt_id: 5002,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6010,
     student_id: 's7',
     quiz_id: 'q3',
     class_name: 'Class 11 - NEET Droppers',
@@ -368,8 +368,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a11',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_attempt_id: 5003,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6011,
     student_id: 's8',
     quiz_id: 'q4',
     class_name: 'Class 10 - Foundation',
@@ -383,8 +383,8 @@ export const mockAttempts: QuizAttempt[] = [
   },
   {
     id: 'a12',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-    moodle_attempt_id: 5004,
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    moodle_attempt_id: 6012,
     student_id: 's9',
     quiz_id: 'q4',
     class_name: 'Class 10 - Foundation',
@@ -401,7 +401,7 @@ export const mockAttempts: QuizAttempt[] = [
 export const mockPlans: StudentPlan[] = [
   {
     id: 'p1',
-    institute_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
     student_id: 's3',
     risk_level: 'high',
     status: 'active',
@@ -413,7 +413,7 @@ export const mockPlans: StudentPlan[] = [
   },
   {
     id: 'p2',
-    institute_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    institute_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
     student_id: 's7',
     risk_level: 'high',
     status: 'active',
