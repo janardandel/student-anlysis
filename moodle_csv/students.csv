@@ -1,0 +1,10 @@
+username,password,firstname,lastname,email,course1,role1,department,idnumber
+alex.smith,Student@12345,Alex,Smith,alex.smith@pitthugram.com,JEE-PHY-12,student,Class 12 - JEE Advanced,JEE-001
+maria.garcia,Student@12345,Maria,Garcia,maria.garcia@pitthugram.com,JEE-PHY-12,student,Class 12 - JEE Advanced,JEE-002
+sam.wilson,Student@12345,Sam,Wilson,sam.wilson@pitthugram.com,JEE-PHY-12,student,Class 12 - JEE Advanced,JEE-003
+elena.rostova,Student@12345,Elena,Rostova,elena.rostova@pitthugram.com,JEE-PHY-12,student,Class 12 - JEE Advanced,JEE-004
+david.chen,Student@12345,David,Chen,david.chen@pitthugram.com,JEE-PHY-12,student,Class 12 - JEE Advanced,JEE-005
+rahul.sharma,Student@12345,Rahul,Sharma,rahul.sharma@pitthugram.com,NEET-PHY-11,student,Class 11 - NEET Droppers,APX-101
+priya.verma,Student@12345,Priya,Verma,priya.verma@pitthugram.com,NEET-PHY-11,student,Class 11 - NEET Droppers,APX-102
+ananya.singh,Student@12345,Ananya,Singh,ananya.singh@pitthugram.com,C10-FOUND,student,Class 10 - Foundation,APX-201
+vikram.aditya,Student@12345,Vikram,Aditya,vikram.aditya@pitthugram.com,C10-FOUND,student,Class 10 - Foundation,APX-202
