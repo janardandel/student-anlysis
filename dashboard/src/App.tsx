@@ -5,7 +5,16 @@ import { StudentTable } from './components/StudentTable';
 import { StudentPlanning } from './components/StudentPlanning';
 import { StudentDetailModal } from './components/StudentDetailModal';
 import { SettingsModal } from './components/SettingsModal';
-import { getSupabase } from './lib/supabase';
+import {
+  getSession,
+  institutesFromSession,
+  fetchCourses,
+  fetchStudents,
+  fetchQuizzes,
+  fetchQuizAttempts,
+  fetchStudentPlans,
+  saveStudentPlan,
+} from './lib/api';
 import { mockInstitutes, mockCourses, mockStudents, mockQuizzes, mockAttempts, mockPlans } from './lib/mockData';
 import { Institute, Course, Student, Quiz, QuizAttempt, StudentPlan } from './types';
 import { AlertCircle } from 'lucide-react';
@@ -30,12 +39,14 @@ export function App() {
   const [allAttempts, setAllAttempts] = useState<QuizAttempt[]>(mockAttempts);
   const [allPlans, setAllPlans] = useState<StudentPlan[]>(mockPlans);
 
-  // Load Data function from Supabase
+  // Load data via the Worker's /api/analytics/* endpoints, scoped to every
+  // institute the signed-in user is a member of. No direct Supabase access
+  // from the browser at all anymore.
   const loadData = async () => {
     setIsRefreshing(true);
-    const supabase = getSupabase();
+    const session = getSession();
 
-    if (!supabase) {
+    if (!session) {
       setIsLiveMode(false);
       setInstitutes(mockInstitutes);
       setAllCourses(mockCourses);
@@ -49,23 +60,31 @@ export function App() {
 
     try {
       setIsLiveMode(true);
-      const [instRes, coursesRes, studentsRes, quizzesRes, attemptsRes, plansRes] = await Promise.all([
-        supabase.from('institutes').select('*'),
-        supabase.from('courses').select('*'),
-        supabase.from('students').select('*'),
-        supabase.from('quizzes').select('*'),
-        supabase.from('quiz_attempts').select('*').order('submitted_at', { ascending: false }),
-        supabase.from('student_plans').select('*'),
-      ]);
+      const myInstitutes = institutesFromSession(session);
+      setInstitutes(myInstitutes.length > 0 ? (myInstitutes as Institute[]) : mockInstitutes);
 
-      if (instRes.data && instRes.data.length > 0) setInstitutes(instRes.data);
-      if (coursesRes.data && coursesRes.data.length > 0) setAllCourses(coursesRes.data);
-      if (studentsRes.data && studentsRes.data.length > 0) setAllStudents(studentsRes.data);
-      if (quizzesRes.data && quizzesRes.data.length > 0) setAllQuizzes(quizzesRes.data);
-      if (attemptsRes.data && attemptsRes.data.length > 0) setAllAttempts(attemptsRes.data);
-      if (plansRes.data && plansRes.data.length > 0) setAllPlans(plansRes.data);
+      const perInstitute = await Promise.all(
+        myInstitutes.map(async (inst) => {
+          const [courses, students, quizzes, attempts, plans] = await Promise.all([
+            fetchCourses<Course[]>(session, inst.id).catch(() => []),
+            fetchStudents<Student[]>(session, inst.id).catch(() => []),
+            fetchQuizzes<Quiz[]>(session, inst.id).catch(() => []),
+            fetchQuizAttempts<QuizAttempt[]>(session, inst.id).catch(() => []),
+            fetchStudentPlans<StudentPlan[]>(session, inst.id).catch(() => []),
+          ]);
+          return { courses, students, quizzes, attempts, plans };
+        })
+      );
+
+      setAllCourses(perInstitute.flatMap((r) => r.courses));
+      setAllStudents(perInstitute.flatMap((r) => r.students));
+      setAllQuizzes(perInstitute.flatMap((r) => r.quizzes));
+      setAllAttempts(
+        perInstitute.flatMap((r) => r.attempts).sort((a, b) => (a.submitted_at < b.submitted_at ? 1 : -1))
+      );
+      setAllPlans(perInstitute.flatMap((r) => r.plans));
     } catch (err) {
-      console.error('Error fetching live data from Supabase', err);
+      console.error('Error loading live data from the analytics API', err);
     } finally {
       setIsRefreshing(false);
     }
@@ -117,19 +136,15 @@ export function App() {
 
   // Save/Update Student Plan
   const handleSavePlan = async (planData: Partial<StudentPlan>) => {
-    const supabase = getSupabase();
+    const session = getSession();
 
-    if (supabase && isLiveMode) {
+    if (session && isLiveMode) {
       try {
-        if (planData.id) {
-          await supabase.from('student_plans').update(planData).eq('id', planData.id);
-        } else {
-          await supabase.from('student_plans').insert([planData]);
-        }
+        await saveStudentPlan(session, planData as Record<string, unknown>);
         await loadData();
         return;
       } catch (e) {
-        console.error('Error saving plan to Supabase:', e);
+        console.error('Error saving plan via analytics API:', e);
       }
     }
 
@@ -252,7 +267,7 @@ export function App() {
         }}
       />
 
-      {/* Settings Modal */}
+      {/* Settings / Sign-in Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
